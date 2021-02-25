@@ -11,3 +11,143 @@ Pollen **Container** Component is a PSR-7 ready Dependencies Injection Container
 ```bash
 composer require pollen-solutions/container
 ```
+
+## Basic Usage
+
+```php
+use Pollen\Container\Container;
+
+$container = new Container();
+
+class Foo {
+    public $bar;
+
+    public function __construct(Bar $bar)
+    {
+        $this->bar = $bar;
+    }
+}
+
+class Bar {}
+
+$container->add(Foo::class, function () use ($container){
+    return new Foo($container->get(Bar::class));
+});
+$container->add(Bar::class);
+
+$foo = $container->get(Foo::class);
+
+var_dump($foo instanceof Foo);
+var_dump($foo->bar instanceof Bar); 
+```
+
+## Service Providers
+
+```php
+use Pollen\Container\Container;
+use Pollen\Container\BaseServiceProvider;
+
+// Classes definitions
+class Foo {
+    public $bar;
+
+    public function __construct(Bar $bar)
+    {
+        $this->bar = $bar;
+    }
+}
+
+class Bar {}
+
+// Service Provider definition
+class FooBarServiceProvider extends BaseServiceProvider
+{
+    protected $provides = [
+        Foo::class,
+        Bar::class
+    ];
+
+    public function register(): void
+    {
+        $this->getContainer()->add(Foo::class, function () {
+            return new Foo($this->getContainer()->get(Bar::class));
+        });
+
+        $this->getContainer()->add(Bar::class);
+    }
+}
+
+// Service Provider declaration
+$container = new Container();
+
+$container->addServiceProvider(new FooBarServiceProvider());
+
+$foo = $container->get(Foo::class);
+
+// Test
+var_dump($foo instanceof Foo);
+var_dump($foo->bar instanceof Bar);
+```
+
+## Delegate Containers
+
+```php
+use Pollen\Container\Container;
+
+$mainContainer = new Container();
+$delegateContainer = new Container();
+
+$mainContainer->delegate($delegateContainer);
+
+class Foo {
+    public $bar;
+
+    public function __construct(Bar $bar)
+    {
+        $this->bar = $bar;
+    }
+}
+
+class Bar {}
+
+$mainContainer->add(Foo::class, function () use ($mainContainer){
+    return new Foo($mainContainer->get(Bar::class));
+});
+
+$delegateContainer->add(Bar::class);
+
+$foo = $mainContainer->get(Foo::class);
+
+var_dump($foo instanceof Foo);
+var_dump($foo->bar instanceof Bar);
+```
+
+## Auto Wiring
+
+```php
+use Pollen\Container\Container;
+
+interface FooInterface {}
+class Foo implements FooInterface {
+    public $bar;
+
+    public function __construct(BarInterface $bar)
+    {
+        $this->bar = $bar;
+    }
+}
+
+interface BarInterface {}
+class Bar implements BarInterface {}
+
+$container = new Container();
+$container->enableAutoWiring();
+
+$container->add(FooInterface::class, Foo::class);
+$container->add(BarInterface::class, Bar::class);
+
+$foo = $container->get(Foo::class);
+
+var_dump($foo instanceof Foo);
+var_dump($foo->bar instanceof Bar);
+```
