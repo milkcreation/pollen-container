@@ -7,16 +7,12 @@ namespace Pollen\Container;
 use League\Container\Container as BaseContainer;
 use League\Container\ReflectionContainer;
 
-class Container extends BaseContainer
+class Container extends BaseContainer implements ContainerInterface
 {
     /**
-     * Activation de l'auto wring
-     *
-     * @param bool $cached
-     *
-     * @return static
+     * @inheritDoc
      */
-    public function enableAutoWiring(bool $cached = false): self
+    public function enableAutoWiring(bool $cached = false): ContainerInterface
     {
         $reflectionContainer = new ReflectionContainer();
 
