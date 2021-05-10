@@ -9,13 +9,6 @@ use League\Container\ServiceProvider\ServiceProviderInterface as BaseBaseService
 interface ServiceProviderInterface extends BaseBaseServiceProviderInterface
 {
     /**
-     * Initialisation du fournisseur de service.
-     *
-     * @return void
-     */
-    public function boot(): void;
-
-    /**
      * Déclaration de services.
      *
      * @return void
