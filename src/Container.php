@@ -12,6 +12,11 @@ use League\Container\ReflectionContainer;
 class Container extends BaseContainer implements ArrayAccess, ContainerInterface
 {
     /**
+     * @var array
+     */
+    protected $aliases = [];
+
+    /**
      * @inheritDoc
      */
     public function enableAutoWiring(bool $cached = false): ContainerInterface
