@@ -45,7 +45,7 @@ var_dump($foo->bar instanceof Bar);
 
 ```php
 use Pollen\Container\Container;
-use Pollen\Container\BaseServiceProvider;
+use Pollen\Container\ServiceProvider;
 
 // Classes definitions
 class Foo {
@@ -60,7 +60,7 @@ class Foo {
 class Bar {}
 
 // Service Provider definition
-class FooBarServiceProvider extends BaseServiceProvider
+class FooBarServiceProvider extends ServiceProvider
 {
     protected $provides = [
         Foo::class,
@@ -88,6 +88,66 @@ $foo = $container->get(Foo::class);
 var_dump($foo instanceof Foo);
 var_dump($foo->bar instanceof Bar);
 ```
+
+### Bootable Service Providers
+```php
+// Classes definitions
+class Foo {
+    public $bar;
+
+    public function __construct(Bar $bar)
+    {
+        $this->bar = $bar;
+    }
+
+    public function onBoot(): void
+    {
+        var_dump(sprintf('%s booted through Service Provider!', __CLASS__));
+    }
+}
+
+class Bar {}
+
+// Service Provider definition
+class FooBarServiceProvider extends BootableServiceProvider
+{
+    protected $provides = [
+        Foo::class,
+        Bar::class
+    ];
+
+    public function boot(): void
+    {
+        /** @var Foo::class $foo */
+        $foo = $this->getContainer()->get(Foo::class);
+        $foo->onBoot();
+    }
+
+    public function register(): void
+    {
+        $this->getContainer()->add(Foo::class, function () {
+            return new Foo($this->getContainer()->get(Bar::class));
+        });
+
+        $this->getContainer()->add(Bar::class);
+    }
+}
+
+// Service Provider declaration
+$container = new Container();
+$serviceProviders = [];
+
+$container->addServiceProvider($serviceProviders[] = new FooBarServiceProvider());
+
+// Boot all Bootable service providers
+foreach ($serviceProviders as $serviceProvider) {
+    if ($serviceProvider instanceof BootableServiceProviderInterface) {
+        $serviceProvider->boot();
+    }
+}
+exit;
+```
+
 
 ## Delegate Containers
 
