@@ -12,9 +12,9 @@ use League\Container\ReflectionContainer;
 class Container extends BaseContainer implements ArrayAccess, ContainerInterface
 {
     /**
-     * @var array
+     * @var array<string, <string>>
      */
-    protected $aliases = [];
+    protected array $aliases = [];
 
     /**
      * @inheritDoc
