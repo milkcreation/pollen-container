@@ -1,14 +1,14 @@
 {
   "name": "pollen-solutions/container",
-    "description": "Pollen Container Component - Dependencies Injection Container.",
-  "homepage": "https://www.presstify.com/pollen-solutions/container/",
+  "description": "Pollen Container Component - Dependencies Injection Container.",
+  "homepage": "https://github.com/milkcreation/pollen-container.git",
   "keywords": [
     "pollen-solutions",
     "component",
     "container",
     "PSR-11"
   ],
-  "time": "2021-07-07",
+  "time": "2021-09-14",
   "license": "MIT",
   "authors": [
     {
